@@ -33,9 +33,13 @@ public class FootballFixtureAdapterImpl implements FootballFixtureAdapter {
 
                 String equipoLocal = local.text();
                 String equipoVisitante = visitante.text();
-                // TODO no saca bien los goles
-                Integer localGol = Integer.getInteger(equipoVisitante.replaceAll("[^0-9]", ""));
-                Integer visitanteGol = Integer.getInteger(equipoVisitante.replaceAll("[^0-9]", ""));
+                String localGolText = equipoLocal.replaceAll("[^0-9]", "");
+                String visitanteGolText = equipoVisitante.replaceAll("[^0-9]", "");
+
+                Integer localGol = localGolText.isEmpty() ? null : Integer.parseInt(localGolText);
+                Integer visitanteGol = visitanteGolText.isEmpty() ? null : Integer.parseInt(visitanteGolText);
+
+
                 String nombreLocal = equipoLocal.replaceAll("[0-9]|' '", "");
                 String nombreVisitante = equipoVisitante.replaceAll("[0-9]|' '", "");
 
