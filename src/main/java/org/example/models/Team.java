@@ -4,19 +4,16 @@ import lombok.Getter;
 
 @Getter
 public class Team {
-    private String name;
-    private Integer goals;
+    private final String name;
 
-    public Team(String name, Integer goals) {
-        this.name = name;
-        this.goals = goals;
+    public Team(String name) {
+        this.name = name.trim();
     }
 
     @Override
     public String toString() {
         return "Team{" +
-                "name='" + name +
-                "', goals=" + goals +
-                " }";
+                "name='" + name+
+                "'}";
     }
 }

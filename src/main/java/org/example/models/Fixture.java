@@ -9,7 +9,7 @@ import java.util.Map;
 public class Fixture {
 
     // It is a map because the key the number of the date(Fecha) and the value is a list of matches
-    private Map<Integer,List<Match>> matches;
+    private final Map<Integer,List<Match>> matches;
 
     public Fixture(Map<Integer, List<Match>> matches) {
         this.matches = matches;

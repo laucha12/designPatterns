@@ -4,6 +4,7 @@ import org.example.interfaces.FootballFixtureAdapter;
 import org.example.models.Fixture;
 import org.example.models.Match;
 import org.example.models.Team;
+import org.example.models.TeamResult;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -43,8 +44,8 @@ public class FootballFixtureAdapterImpl implements FootballFixtureAdapter {
                 String nombreLocal = equipoLocal.replaceAll("[0-9]|' '", "");
                 String nombreVisitante = equipoVisitante.replaceAll("[0-9]|' '", "");
 
-                Team localTeam = new Team(nombreLocal, localGol);
-                Team visitanteTeam = new Team(nombreVisitante, visitanteGol);
+                TeamResult localTeam = new TeamResult(new Team(nombreLocal), localGol);
+                TeamResult visitanteTeam = new TeamResult(new Team(nombreVisitante), visitanteGol);
                 Match match = new Match(localTeam, visitanteTeam);
                 fixture.get(i).add(match);
             }

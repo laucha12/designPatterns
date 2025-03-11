@@ -4,22 +4,23 @@ import lombok.Getter;
 
 @Getter
 public class Match {
-    private Team local;
-    private Team visitor;
+
+    private final TeamResult localResult;
+    private final TeamResult visitorResult;
 
 
 
-    public Match(Team local, Team visitor) {
-        this.local = local;
-        this.visitor = visitor;
+    public Match(TeamResult localResult, TeamResult visitorResult) {
+        this.localResult = localResult;
+        this.visitorResult = visitorResult;
     }
 
 
     @Override
     public String toString() {
         return "Match{" +
-                "local=" + local +
-                ", visitor=" + visitor +
+                "local=" + localResult +
+                ", visitorResult=" + visitorResult +
                 '}';
     }
 }
