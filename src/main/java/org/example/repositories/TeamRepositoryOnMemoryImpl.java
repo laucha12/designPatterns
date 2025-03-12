@@ -6,20 +6,20 @@ import org.example.models.Team;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TeamRepositoryInMemoryImpl implements TeamRepository {
+public class TeamRepositoryOnMemoryImpl implements TeamRepository {
 
 
     private final Map<String, Team> teams;
 
-    private static TeamRepositoryInMemoryImpl instance;
+    private static TeamRepositoryOnMemoryImpl instance;
 
-    private TeamRepositoryInMemoryImpl() {
+    private TeamRepositoryOnMemoryImpl() {
         this.teams = new HashMap<>();
     }
 
-    public static TeamRepositoryInMemoryImpl getInstance() {
+    public static TeamRepositoryOnMemoryImpl getInstance() {
         if (instance == null) {
-            instance = new TeamRepositoryInMemoryImpl();
+            instance = new TeamRepositoryOnMemoryImpl();
         }
         return instance;
     }

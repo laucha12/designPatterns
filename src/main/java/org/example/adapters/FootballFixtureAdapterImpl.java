@@ -1,6 +1,7 @@
 package org.example.adapters;
 
 import org.example.interfaces.FootballFixtureAdapter;
+import org.example.interfaces.TeamRepository;
 import org.example.models.Fixture;
 import org.example.models.Match;
 import org.example.models.Team;
@@ -18,7 +19,10 @@ import java.util.Map;
 
 public class FootballFixtureAdapterImpl implements FootballFixtureAdapter {
     private final String ARGENTINIAN_LEAGUE = "https://info.afa.org.ar/deposito/html/v3/htmlCenter/data/deportes/futbol/primeraa/pages/es/fixture.html?h=dfMc-page-ec43917b-a0f4-4d06-a34c-d9069f6f4ce0";
-
+    private final TeamRepository teamRepository;
+    public FootballFixtureAdapterImpl(final TeamRepository teamRepository) {
+        this.teamRepository = teamRepository;
+    }
     @Override
     public Fixture getFootballFixture() throws IOException {
         Document doc = Jsoup.connect(ARGENTINIAN_LEAGUE).get();
@@ -44,8 +48,8 @@ public class FootballFixtureAdapterImpl implements FootballFixtureAdapter {
                 String nombreLocal = equipoLocal.replaceAll("[0-9]|' '", "");
                 String nombreVisitante = equipoVisitante.replaceAll("[0-9]|' '", "");
 
-                TeamResult localTeam = new TeamResult(new Team(nombreLocal), localGol);
-                TeamResult visitanteTeam = new TeamResult(new Team(nombreVisitante), visitanteGol);
+                TeamResult localTeam = new TeamResult(teamRepository.getOrCreateTeam(nombreLocal), localGol);
+                TeamResult visitanteTeam = new TeamResult(teamRepository.getOrCreateTeam(nombreVisitante), visitanteGol);
                 Match match = new Match(localTeam, visitanteTeam);
                 fixture.get(i).add(match);
             }
