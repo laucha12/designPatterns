@@ -4,7 +4,6 @@ import org.example.interfaces.FootballFixtureAdapter;
 import org.example.interfaces.TeamRepository;
 import org.example.models.Fixture;
 import org.example.models.Match;
-import org.example.models.Team;
 import org.example.models.TeamResult;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -17,10 +16,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FootballFixtureAdapterImpl implements FootballFixtureAdapter {
+public class ArgentinianFootballFixtureAdapterImpl implements FootballFixtureAdapter {
     private final String ARGENTINIAN_LEAGUE = "https://info.afa.org.ar/deposito/html/v3/htmlCenter/data/deportes/futbol/primeraa/pages/es/fixture.html?h=dfMc-page-ec43917b-a0f4-4d06-a34c-d9069f6f4ce0";
     private final TeamRepository teamRepository;
-    public FootballFixtureAdapterImpl(final TeamRepository teamRepository) {
+    public ArgentinianFootballFixtureAdapterImpl(final TeamRepository teamRepository) {
         this.teamRepository = teamRepository;
     }
     @Override
