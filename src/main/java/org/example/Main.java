@@ -2,6 +2,7 @@ package org.example;
 
 import org.example.adapters.ArgentinianFootballFixtureAdapterImpl;
 import org.example.adapters.PremierLeagueFootballFixtureAdapterImpl;
+import org.example.cli.FixtureCli;
 import org.example.interfaces.FootballFixtureAdapter;
 import org.example.interfaces.TeamRepository;
 import org.example.repositories.TeamRepositoryOnMemoryImpl;
@@ -13,5 +14,6 @@ public class Main {
         TeamRepository teamRepository = TeamRepositoryOnMemoryImpl.getInstance();
         FootballFixtureAdapter footballFixtureAdapter = new PremierLeagueFootballFixtureAdapterImpl(teamRepository);
         System.out.println(footballFixtureAdapter.getFootballFixture().getMatches());
+        FixtureCli.main(args);
     }
 }
