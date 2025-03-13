@@ -1,6 +1,5 @@
 package org.example.cli.commands;
 
-import org.example.models.Fixture;
 import org.example.models.Match;
 import org.example.models.Team;
 import org.example.models.TeamResult;
@@ -12,6 +11,7 @@ import org.jline.utils.InfoCmp;
 import picocli.CommandLine;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -67,10 +67,15 @@ public class CreateCommand implements Callable<Integer> {
             String digit = String.valueOf(i);
             keyMap.bind(digit, digit);
         }
+
         return keyMap;
     }
 
-    private static void getTeamScores() throws IOException {
+    private static String highlight(String input) {
+        return String.format("\033[47m\033[30m%s\033[0m",input);
+    }
+
+    private static void getTeamScores(){
         // Save terminal state
         terminal.enterRawMode();
 
@@ -79,20 +84,17 @@ public class CreateCommand implements Callable<Integer> {
 
         List<Match> matches = List.of(new Match(new TeamResult(new Team("Team A"), null), new TeamResult(new Team("Team B"), null)),
                 new Match(new TeamResult(new Team("Team C"), null), new TeamResult(new Team("Team D"), null)));
+        int[] scores = new int[2];
 
-        String[] teams = {"Team A", "Team B", "Team C", "Team D"};
-        int[][] scores = new int[teams.length/2][2];
-        boolean[][] firstDigitAfterChange = new boolean[teams.length/2][2];
-
-        // Initialize all firstDigitAfterChange flags to true for initial input
-        for (int i = 0; i < teams.length/2; i++) {
-            firstDigitAfterChange[i][0] = true;
-            firstDigitAfterChange[i][1] = true;
-        }
+        //Save if the digit is being entered after switching score cursor to delete previous score
+        //Is true if the digit being entered is the first after moving cursor
+        boolean[] firstDigitAfterChange = new boolean[2];
+        Arrays.fill(firstDigitAfterChange, true);
 
         try {
-            for (int match = 0; match < teams.length/2; match++) {
-                System.out.println("Progress: " + match*100.0/ (teams.length/2) + "%");
+            for (int matchIndex = 0; matchIndex < matches.size(); matchIndex++) {
+                final Match match = matches.get(matchIndex);
+                System.out.println("Progress: " + matchIndex*100.0/ matches.size() + "%");
                 int selectedScore = 0; // 0 for left team, 1 for right team
                 boolean matchComplete = false;
                 int previousSelectedScore = -1; // Track position changes
@@ -100,36 +102,35 @@ public class CreateCommand implements Callable<Integer> {
                 while (!matchComplete) {
                     // Detect cursor position change
                     if (previousSelectedScore != selectedScore) {
-                        firstDigitAfterChange[match][selectedScore] = true;
+                        firstDigitAfterChange[selectedScore] = true;
                         previousSelectedScore = selectedScore;
                     }
-
                     // Clear any existing content and move to start of line
                     System.out.print("\r\033[K");
 
-                    // Build and print the match display with highlighting
                     StringBuilder display = new StringBuilder();
-                    display.append(teams[match*2]).append(" ");
+                    //Add first team name
+                    display.append(match.getLocalResult().getTeam().getName()).append(" ");
 
                     // Left score with highlighting if selected
                     if (selectedScore == 0) {
-                        display.append("\033[47m\033[30m<").append(scores[match][0]).append(">\033[0m");
+                        display.append(highlight(String.valueOf(scores[0])));
                     } else {
-                        display.append("<").append(scores[match][0]).append(">");
+                        display.append(scores[0]);
                     }
 
                     display.append(" - ");
 
                     // Right score with highlighting if selected
                     if (selectedScore == 1) {
-                        display.append("\033[47m\033[30m<").append(scores[match][1]).append(">\033[0m");
+                        display.append(highlight(String.valueOf(scores[1])));
                     } else {
-                        display.append("<").append(scores[match][1]).append(">");
+                        display.append(scores[1]);
                     }
 
-                    display.append(" ").append(teams[match*2 + 1]);
+                    display.append(" ").append(match.getVisitorResult().getTeam().getName());
 
-                    System.out.print(display.toString());
+                    System.out.print(display);
                     terminal.flush();
 
                     // Read key input
@@ -139,60 +140,49 @@ public class CreateCommand implements Callable<Integer> {
                         // Unknown key - ignore
                         continue;
                     }
-
+                    //Switch expression
                     switch (operation) {
-                        case "left":
-                            selectedScore = 0;
-                            break;
-                        case "right":
-                            selectedScore = 1;
-                            break;
-                        case "enter":
+                        case "left" -> selectedScore = 0;
+                        case "right" -> selectedScore = 1;
+                        case "enter" -> {
                             if (selectedScore == 0) {
                                 selectedScore = 1;
                             } else {
                                 matchComplete = true;
                             }
-                            break;
-                        case "backspace":
-                            scores[match][selectedScore] /= 10; // Remove last digit
-                            firstDigitAfterChange[match][selectedScore] = scores[match][selectedScore] == 0;
-                            break;
-                        case "delete":
-                            scores[match][selectedScore] /= 10; // Remove last digit
-                            firstDigitAfterChange[match][selectedScore] = scores[match][selectedScore] == 0;
-                            break;
-                        default:
+                        }
+                        case "backspace", "delete" -> {
+                            scores[selectedScore] /= 10;// Remove last digit
+                            firstDigitAfterChange[selectedScore] = (scores[selectedScore] == 0);
+                        }
+                        default -> {
                             // Check if it's a digit
                             if (operation.length() == 1 && Character.isDigit(operation.charAt(0))) {
                                 int digit = Integer.parseInt(operation);
 
                                 // If this is the first digit after changing position, replace the existing score
-                                if (firstDigitAfterChange[match][selectedScore]) {
-                                    scores[match][selectedScore] = digit;
-                                    firstDigitAfterChange[match][selectedScore] = false;
+                                if (firstDigitAfterChange[selectedScore]) {
+                                    scores[selectedScore] = digit;
+                                    firstDigitAfterChange[selectedScore] = false;
                                 } else {
                                     // Otherwise append to the existing score
-                                    scores[match][selectedScore] = scores[match][selectedScore] * 10 + digit;
+                                    scores[selectedScore] = scores[selectedScore] * 10 + digit;
                                 }
                             }
-                            break;
+                        }
                     }
                 }
 
                 // Reset for the next match
-                firstDigitAfterChange[match][0] = true;
-                firstDigitAfterChange[match][1] = true;
-
-                // Print final match result before moving to next match
-                System.out.print("\r\033[K");  // Clear line
-                System.out.printf("Match %d result: %s %d - %d %s\n\n",
-                        match + 1, teams[match*2], scores[match][0],
-                        scores[match][1], teams[match*2 + 1]);
+                match.getLocalResult().setGoals(scores[0]);
+                match.getVisitorResult().setGoals(scores[1]);
+                Arrays.fill(firstDigitAfterChange, true);
+                Arrays.fill(scores,0);
                 clearScreen();
             }
 
             System.out.println("All scores have been entered!");
+            System.out.println(matches);
 
         } finally {
             // Restore terminal to normal mode
@@ -201,9 +191,8 @@ public class CreateCommand implements Callable<Integer> {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer call(){
         clearScreen();
-//        simulateProgress("Creating a fixture...");
         getTeamScores();
         return 0;
     }
