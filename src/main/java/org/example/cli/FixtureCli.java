@@ -14,6 +14,12 @@ import java.util.concurrent.Callable;
 )
 public class FixtureCli implements Callable<Integer> {
 
+
+    enum League {Arg, Eng}
+
+    @CommandLine.Option(names = {"-l", "--league"}, description = "League (Arg or Eng)", required = true)
+    private League league;
+
     //Run code common to all commands
     private void init(){
         System.out.println("Hello World!");

@@ -1,6 +1,5 @@
 package org.example.adapters;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.interfaces.FootballFixtureAdapter;
@@ -11,12 +10,9 @@ import org.example.models.TeamResult;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class PremierLeagueFootballFixtureAdapterImpl implements FootballFixtureAdapter {
 

@@ -1,10 +1,12 @@
 package org.example.models;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class Team {
-    private final String name;
+    private String name;
 
     public Team(String name) {
         this.name = name.trim();

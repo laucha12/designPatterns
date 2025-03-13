@@ -1,12 +1,14 @@
 package org.example.models;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
+@NoArgsConstructor
 public class TeamResult {
 
-    private final Team team;
+    private Team team;
 
     @Setter
     private Integer goals;

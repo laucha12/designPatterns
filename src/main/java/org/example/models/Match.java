@@ -1,12 +1,14 @@
 package org.example.models;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class Match {
 
-    private final TeamResult localResult;
-    private final TeamResult visitorResult;
+    private TeamResult localResult;
+    private TeamResult visitorResult;
 
 
 
