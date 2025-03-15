@@ -3,10 +3,11 @@ package org.example.models;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.interfaces.Cloneable;
 
 @Getter
 @NoArgsConstructor
-public class TeamResult {
+public class TeamResult implements Cloneable<TeamResult> {
 
     private Team team;
 
@@ -16,6 +17,11 @@ public class TeamResult {
     public TeamResult(Team team, Integer goals) {
         this.team = team;
         this.goals = goals;
+    }
+
+    @Override
+    public TeamResult clone() {
+        return new TeamResult(team.clone(), goals);
     }
 
     @Override

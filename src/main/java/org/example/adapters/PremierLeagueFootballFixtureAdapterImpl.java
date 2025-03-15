@@ -6,6 +6,7 @@ import org.example.interfaces.FootballFixtureAdapter;
 import org.example.interfaces.TeamRepository;
 import org.example.models.Fixture;
 import org.example.models.Match;
+import org.example.models.MatchDate;
 import org.example.models.TeamResult;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -23,23 +24,24 @@ public class PremierLeagueFootballFixtureAdapterImpl implements FootballFixtureA
     public PremierLeagueFootballFixtureAdapterImpl(TeamRepository teamRepository) {
         this.teamRepository = teamRepository;
     }
+
     @Override
     public Fixture getFootballFixture() throws IOException {
         int page = 0;
         int totalPages;
-        Fixture fixtures = new Fixture(new HashMap<>());
+        Fixture fixture = new Fixture();
         do {
             String url = String.format(PREMIER_LEAGUE, page);
             JsonNode rootNode = fetchJsonFromUrl(url);
             if (rootNode == null) break;
 
             totalPages = rootNode.path("pageInfo").path("numPages").asInt();
-            parseFixtures(rootNode.path("content"), fixtures);
+            parseFixtures(rootNode.path("content"), fixture);
 
             page++;
         } while (page <= totalPages);
 
-        return fixtures;
+        return fixture;
     }
 
     private JsonNode fetchJsonFromUrl(String url) throws IOException {
@@ -56,6 +58,7 @@ public class PremierLeagueFootballFixtureAdapterImpl implements FootballFixtureA
             JsonNode teams = jsonMatch.path("teams");
 
             if (!gameweek.isMissingNode() && teams.isArray()) {
+                Integer date = gameweek.asInt();
                 String team1 = teams.get(0).path("team").path("name").asText();
                 String team2 = teams.get(1).path("team").path("name").asText();
 
@@ -73,10 +76,8 @@ public class PremierLeagueFootballFixtureAdapterImpl implements FootballFixtureA
                 TeamResult localTeam = new TeamResult(teamRepository.getOrCreateTeam(team1), gol1);
                 TeamResult visitingTeam = new TeamResult(teamRepository.getOrCreateTeam(team2), gol2);
 
-                Integer date = gameweek.asInt();
-
                 Match match = new Match(localTeam, visitingTeam);
-                fixture.getMatches().computeIfAbsent(date, k -> new ArrayList<>()).add(match);
+                fixture.addMatch(date, match);
             }
         }
     }
