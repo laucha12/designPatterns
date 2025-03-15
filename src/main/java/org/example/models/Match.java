@@ -1,5 +1,6 @@
 package org.example.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.interfaces.Cloneable;
@@ -25,8 +26,14 @@ public class Match implements Cloneable<Match> {
         return new Match(localResult.clone(), visitorResult.clone());
     }
 
+    @JsonIgnore
     public boolean isPending(){
         return !played;
+    }
+
+    @JsonIgnore
+    public String getTeamsString(){
+        return localResult.getTeam().getName() + "-" + visitorResult.getTeam().getName();
     }
 
 

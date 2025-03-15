@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 public class Fixture {
 
     //Use map to get the dates by id
+    @Getter
     Map<Integer, MatchDate> matchDates = new HashMap<>();
 
     public void addMatch(int date, Match match) {
@@ -30,7 +31,8 @@ public class Fixture {
         return matchDates.get(matchDateNumber);
     }
 
-    public List<MatchDate> getMatchDates(){
+    @JsonIgnore
+    public List<MatchDate> getMatchDatesList(){
         return matchDates.values().stream().toList();
     }
 

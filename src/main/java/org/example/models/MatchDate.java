@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
@@ -15,20 +13,26 @@ import java.util.stream.Collectors;
 public class MatchDate {
 
     private int number;
-    private Set<Match> matches;
+    //Only because Set does not allow a get method (?)
+    private Map<String ,Match> matches;
 
     public MatchDate(int number) {
         this.number = number;
-        matches = new HashSet<>();
+        matches = new HashMap<>();
     }
 
     public void addMatch(Match match) {
-        matches.add(match);
+        matches.put(match.getTeamsString(),match);
+    }
+
+    public Match getMatch(String teamsString){
+        return matches.get(teamsString);
     }
 
     @JsonIgnore
     public Set<Match> getPlayedMatches() {
         return matches
+                .values()
                 .stream()
                 .filter(Match::isPlayed)
                 .collect(Collectors.toSet());
@@ -37,15 +41,18 @@ public class MatchDate {
     @JsonIgnore
     public Set<Match> getPendingMatches() {
         return matches
+                .values()
                 .stream()
                 .filter(Match::isPending)
                 .collect(Collectors.toSet());
     }
 
+    @JsonIgnore
     public boolean hasPendingMatches() {
         return !getPendingMatches().isEmpty();
     }
 
+    @JsonIgnore
     public boolean isPlayed() {
         return !hasPendingMatches();
     }

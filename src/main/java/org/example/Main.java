@@ -30,12 +30,12 @@ public class Main {
 ////        } catch (Exception e) {
 ////            throw new RuntimeException(e);
 ////        }
-////        try(InputStream inputStream = new FileInputStream("fixture.txt")) {
-////            Fixture fixture = fixtureDataSource.readFixture(inputStream);
-////            System.out.println(fixture);
-////        } catch (Exception e) {
-////            throw new RuntimeException(e);
-////        }
+//        try(InputStream inputStream = new FileInputStream("fixture.txt")) {
+//            Fixture fixture = fixtureDataSource.readFixture(inputStream);
+//            System.out.println(fixture);
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
 //        System.out.println(footballFixtureAdapter.getFootballFixture().getMatchDates());
         FixtureCli.main(args);
     }
