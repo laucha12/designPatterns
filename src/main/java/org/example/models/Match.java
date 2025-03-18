@@ -5,25 +5,31 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.interfaces.Cloneable;
 
+import java.util.Optional;
+
 @Getter
 @NoArgsConstructor
 public class Match implements Cloneable<Match> {
 
     private boolean played;
-    private TeamResult localResult;
-    private TeamResult visitorResult;
+    private Team localTeam;
+    private Team visitorTeam;
+    private Optional<Integer> localGoals;
+    private Optional<Integer> visitorGoals;
 
 
-    public Match(TeamResult localResult, TeamResult visitorResult) {
-        this.localResult = localResult;
-        this.visitorResult = visitorResult;
-        played = localResult.getGoals() != null && visitorResult.getGoals() != null;
+    private Match(Team localTeam, Team visitorTeam, Optional<Integer> localGoals, Optional<Integer> visitorGoals) {
+        this.played = localGoals.isPresent() && visitorGoals.isPresent();
+        this.localTeam = localTeam;
+        this.visitorTeam = visitorTeam;
+        this.localGoals = localGoals;
+        this.visitorGoals = visitorGoals;
     }
-
 
     @Override
     public Match clone() {
-        return new Match(localResult.clone(), visitorResult.clone());
+        //Optional is immutable
+        return new Match(localTeam.clone(), visitorTeam.clone(), localGoals, visitorGoals);
     }
 
     @JsonIgnore
@@ -32,12 +38,44 @@ public class Match implements Cloneable<Match> {
     }
 
 
-    @Override
-    public String toString() {
-        return "Match{" +
-                "played=" + played +
-                ", localResult=" + localResult +
-                ", visitorResult=" + visitorResult +
-                '}';
+
+    public static MatchBuilder builder(){
+        return new Builder();
+    }
+
+    public static class Builder implements MatchBuilder{
+        private Team localTeam;
+        private Team visitorTeam;
+        private Integer localGoals;
+        private Integer visitorGoals;
+
+        @Override
+        public MatchBuilder localTeam(Team localTeam) {
+            this.localTeam = localTeam;
+            return this;
+        }
+
+        @Override
+        public MatchBuilder visitorTeam(Team visitorTeam) {
+            this.visitorTeam = visitorTeam;
+            return this;
+        }
+
+        @Override
+        public MatchBuilder localGoals(Integer goals) {
+            this.localGoals = goals;
+            return this;
+        }
+
+        @Override
+        public MatchBuilder visitorGoals(Integer visitorGoals) {
+            this.visitorGoals = visitorGoals;
+            return this;
+        }
+
+        @Override
+        public Match build() {
+            return new Match(localTeam, visitorTeam, Optional.ofNullable(localGoals), Optional.ofNullable(visitorGoals));
+        }
     }
 }

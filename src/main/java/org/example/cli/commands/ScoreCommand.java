@@ -44,13 +44,14 @@ public class ScoreCommand implements Callable<Integer> {
         //get all the dates the user predicted (they will be marked as pending because of when they were stored)
         for(MatchDate userDate : userFixture.getMatchDatesList()){
             //Get the results for that date
+            //FIXME: is null for premier league
             final MatchDate leagueDate = leagueFixture.getMatchDate(userDate.getNumber());
             //We add points for all played matches
             for(Match userPrediction: userDate.getPlayedMatches()){
-                Match leagueResult = leagueDate.getMatch(userPrediction.getLocalResult().getTeam(), userPrediction.getVisitorResult().getTeam());
+                Match leagueResult = leagueDate.getMatch(userPrediction.getLocalTeam(), userPrediction.getVisitorTeam());
                 if(leagueResult != null && leagueResult.isPlayed() &&
-                    Objects.equals(userPrediction.getLocalResult().getGoals(), leagueResult.getLocalResult().getGoals()) &&
-                    Objects.equals(userPrediction.getVisitorResult().getGoals(), leagueResult.getVisitorResult().getGoals())){
+                    Objects.equals(userPrediction.getLocalGoals(), leagueResult.getLocalGoals()) &&
+                    Objects.equals(userPrediction.getVisitorGoals(), leagueResult.getVisitorGoals())){
                     score++;
                 }
 //                score += Optional.ofNullable(userDate.getMatch(playedMatch.getTeamsString()))//user has a prediction for that match

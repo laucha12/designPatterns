@@ -91,6 +91,7 @@ public class FixtureCli implements Callable<Integer> {
         try {
             init();
         }catch (Exception e){
+            e.printStackTrace();
             return 1;//Exit with error code
         }
         return (new CommandLine.RunLast()).execute(parseResult);

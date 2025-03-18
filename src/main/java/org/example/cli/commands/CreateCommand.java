@@ -69,7 +69,9 @@ public class CreateCommand implements Callable<Integer> {
     private Match getMatchScore(Match fixtureMatch, BindingReader reader, KeyMap<String> keyMap) {
 
         //Get new instance of match to change the results
-        Match match = fixtureMatch.clone();
+        MatchBuilder matchBuilder = Match.builder()
+                .localTeam(fixtureMatch.getLocalTeam())
+                .visitorTeam(fixtureMatch.getVisitorTeam());
         int[] scores = new int[2];
         //Save if the digit is being entered after switching score cursor to delete previous score
         //Is true if the digit being entered is the first after moving cursor
@@ -92,7 +94,7 @@ public class CreateCommand implements Callable<Integer> {
 
             StringBuilder display = new StringBuilder();
             //Add first team name
-            display.append(fixtureMatch.getLocalResult().getTeam().getName()).append(" ");
+            display.append(fixtureMatch.getLocalTeam().getName()).append(" ");
 
             // Left score with highlighting if selected
             if (selectedScore == 0) {
@@ -110,7 +112,7 @@ public class CreateCommand implements Callable<Integer> {
                 display.append(scores[1]);
             }
 
-            display.append(" ").append(fixtureMatch.getVisitorResult().getTeam().getName());
+            display.append(" ").append(fixtureMatch.getVisitorTeam().getName());
 
             System.out.print(display);
             terminal.flush();
@@ -156,12 +158,12 @@ public class CreateCommand implements Callable<Integer> {
         }
 
         // Reset for the next match
-        match.getLocalResult().setGoals(scores[0]);
-        match.getVisitorResult().setGoals(scores[1]);
+        matchBuilder.localGoals(scores[0]);
+        matchBuilder.visitorGoals(scores[1]);
         Arrays.fill(firstDigitAfterChange, true);
         Arrays.fill(scores,0);
         clearScreen();
-        return match;
+        return matchBuilder.build();
     }
 
     private Fixture getTeamScores(){

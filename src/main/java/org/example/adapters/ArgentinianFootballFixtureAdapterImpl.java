@@ -2,16 +2,14 @@ package org.example.adapters;
 
 import org.example.interfaces.FootballFixtureAdapter;
 import org.example.interfaces.TeamRepository;
-import org.example.models.Fixture;
-import org.example.models.Match;
-import org.example.models.MatchDate;
-import org.example.models.TeamResult;
+import org.example.models.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class ArgentinianFootballFixtureAdapterImpl implements FootballFixtureAdapter {
 
@@ -22,6 +20,15 @@ public class ArgentinianFootballFixtureAdapterImpl implements FootballFixtureAda
     public ArgentinianFootballFixtureAdapterImpl(final TeamRepository teamRepository) {
         this.teamRepository = teamRepository;
     }
+
+    private String getTeamName(final String teamText){
+        return teamText.replaceAll("[0-9]|' '", "");
+    }
+
+    private String getTeamGoals(final String teamText){
+        return teamText.replaceAll("[^0-9]", "");
+    }
+
     @Override
     public Fixture getFootballFixture() throws IOException {
         Document doc = Jsoup.connect(ARGENTINIAN_LEAGUE).get();
@@ -33,26 +40,53 @@ public class ArgentinianFootballFixtureAdapterImpl implements FootballFixtureAda
             MatchDate matchDate = new MatchDate(i);
             Elements partidos = fecha.select(".match");
             for (Element partido: partidos) {
-                Element local = partido.select(".local").first();
-                Element visitante = partido.select(".visitante").first();
+                MatchBuilder matchBuilder = Match.builder();
+                Optional<String> localTeamText = Optional.ofNullable(partido.select(".local").first())
+                        .map(Element::text);
+                Optional<String> visitorTeamText = Optional.ofNullable(partido.select(".visitante").first())
+                        .map(Element::text);
 
-                String equipoLocal = local.text();
-                String equipoVisitante = visitante.text();
-                String localGolText = equipoLocal.replaceAll("[^0-9]", "");
-                String visitanteGolText = equipoVisitante.replaceAll("[^0-9]", "");
+                //Set local team
+                localTeamText.map(this::getTeamName)
+                        .map(teamRepository::getOrCreateTeam)
+                        .ifPresent(matchBuilder::localTeam);
+                //Set visitor team
+                visitorTeamText.map(this::getTeamName)
+                        .map(teamRepository::getOrCreateTeam)
+                        .ifPresent(matchBuilder::visitorTeam);
 
-                Integer localGol = localGolText.isEmpty() ? null : Integer.parseInt(localGolText);
-                Integer visitanteGol = visitanteGolText.isEmpty() ? null : Integer.parseInt(visitanteGolText);
+                //Set local goals
+                localTeamText.map(this::getTeamGoals)
+                        .filter(s -> !s.isEmpty())
+                        .map(Integer::parseInt)
+                        .ifPresent(matchBuilder::localGoals);
+                //Set visitor goals
+                visitorTeamText.map(this::getTeamGoals)
+                        .filter(s -> !s.isEmpty())
+                        .map(Integer::parseInt)
+                        .ifPresent(matchBuilder::visitorGoals);
 
 
-                String nombreLocal = equipoLocal.replaceAll("[0-9]|' '", "");
-                String nombreVisitante = equipoVisitante.replaceAll("[0-9]|' '", "");
-
-                TeamResult localTeam = new TeamResult(teamRepository.getOrCreateTeam(nombreLocal), localGol);
-                TeamResult visitanteTeam = new TeamResult(teamRepository.getOrCreateTeam(nombreVisitante), visitanteGol);
-                Match match = new Match(localTeam, visitanteTeam);
+//                Element local = partido.select(".local").first();
+//                Element visitante = partido.select(".visitante").first();
+//
+//                String equipoLocal = local.text();
+//                String equipoVisitante = visitante.text();
+//                String localGolText = equipoLocal.replaceAll("[^0-9]", "");
+//                String visitanteGolText = equipoVisitante.replaceAll("[^0-9]", "");
+//
+//                Integer localGol = localGolText.isEmpty() ? null : Integer.parseInt(localGolText);
+//                Integer visitanteGol = visitanteGolText.isEmpty() ? null : Integer.parseInt(visitanteGolText);
+//
+//
+//                String nombreLocal = equipoLocal.replaceAll("[0-9]|' '", "");
+//                String nombreVisitante = equipoVisitante.replaceAll("[0-9]|' '", "");
+//
+//                TeamResult localTeam = new TeamResult(teamRepository.getOrCreateTeam(nombreLocal), localGol);
+//                TeamResult visitanteTeam = new TeamResult(teamRepository.getOrCreateTeam(nombreVisitante), visitanteGol);
+                Match match = matchBuilder.build();
                 //Avoid unconfirmed matches
-                if(!localTeam.getTeam().getName().equals("A Confirmar")){
+                if(!match.getLocalTeam().getName().equals("A Confirmar")){
                     matchDate.addMatch(match);
                 }
             }

@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.interfaces.FootballFixtureAdapter;
 import org.example.interfaces.TeamRepository;
-import org.example.models.Fixture;
-import org.example.models.Match;
-import org.example.models.MatchDate;
-import org.example.models.TeamResult;
+import org.example.models.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -61,23 +58,20 @@ public class PremierLeagueFootballFixtureAdapterImpl implements FootballFixtureA
                 Integer date = gameweek.asInt();
                 String team1 = teams.get(0).path("team").path("name").asText();
                 String team2 = teams.get(1).path("team").path("name").asText();
+                MatchBuilder matchBuilder = Match.builder()
+                        .localTeam(teamRepository.getOrCreateTeam(team1))
+                        .visitorTeam(teamRepository.getOrCreateTeam(team2));
+
 
                 JsonNode gol1Node = teams.get(0).path("score");
                 JsonNode gol2Node = teams.get(1).path("score");
 
-                Integer gol1 = null;
-                Integer gol2 = null;
-
                 if (!gol1Node.isMissingNode() && !gol2Node.isMissingNode()) {
-                    gol1 = gol1Node.asInt();
-                    gol2 = gol2Node.asInt();
+                    matchBuilder.localGoals(gol1Node.asInt());
+                    matchBuilder.visitorGoals(gol2Node.asInt());
                 }
 
-                TeamResult localTeam = new TeamResult(teamRepository.getOrCreateTeam(team1), gol1);
-                TeamResult visitingTeam = new TeamResult(teamRepository.getOrCreateTeam(team2), gol2);
-
-                Match match = new Match(localTeam, visitingTeam);
-                fixture.addMatch(date, match);
+                fixture.addMatch(date, matchBuilder.build());
             }
         }
     }

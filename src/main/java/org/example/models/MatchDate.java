@@ -26,7 +26,7 @@ public class MatchDate {
     }
 
     private static String getMatchTeamsString(final Match match){
-        return getTeamsString(match.getLocalResult().getTeam(), match.getVisitorResult().getTeam());
+        return getTeamsString(match.getLocalTeam(), match.getVisitorTeam());
     }
 
     public void addMatch(Match match) {
