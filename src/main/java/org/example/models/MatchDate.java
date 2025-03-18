@@ -21,12 +21,20 @@ public class MatchDate {
         matches = new HashMap<>();
     }
 
-    public void addMatch(Match match) {
-        matches.put(match.getTeamsString(),match);
+    private static String getTeamsString(Team localTeam, Team visitorTeam){
+        return localTeam.getName() + "-" + visitorTeam.getName();
     }
 
-    public Match getMatch(String teamsString){
-        return matches.get(teamsString);
+    private static String getMatchTeamsString(final Match match){
+        return getTeamsString(match.getLocalResult().getTeam(), match.getVisitorResult().getTeam());
+    }
+
+    public void addMatch(Match match) {
+        matches.put(getMatchTeamsString(match),match);
+    }
+
+    public Match getMatch(Team localTeam, Team visitorTeam){
+        return matches.get(getTeamsString(localTeam, visitorTeam));
     }
 
     @JsonIgnore

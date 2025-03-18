@@ -47,7 +47,7 @@ public class ScoreCommand implements Callable<Integer> {
             final MatchDate leagueDate = leagueFixture.getMatchDate(userDate.getNumber());
             //We add points for all played matches
             for(Match userPrediction: userDate.getPlayedMatches()){
-                Match leagueResult = leagueDate.getMatch(userPrediction.getTeamsString());
+                Match leagueResult = leagueDate.getMatch(userPrediction.getLocalResult().getTeam(), userPrediction.getVisitorResult().getTeam());
                 if(leagueResult != null && leagueResult.isPlayed() &&
                     Objects.equals(userPrediction.getLocalResult().getGoals(), leagueResult.getLocalResult().getGoals()) &&
                     Objects.equals(userPrediction.getVisitorResult().getGoals(), leagueResult.getVisitorResult().getGoals())){
@@ -72,7 +72,7 @@ public class ScoreCommand implements Callable<Integer> {
         clearScreen();
         final Fixture leagueFixture = parent.getFixture();
         final Fixture userFixture = readFixture(parent.getFileName(), parent.getFixtureDataSource());
-        System.out.printf("User score is %d\n", getScore(leagueFixture, userFixture));
+        System.out.printf("Prode score is %d\n", getScore(leagueFixture, userFixture));
         return 0;
     }
 

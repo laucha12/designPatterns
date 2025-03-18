@@ -31,11 +31,6 @@ public class Match implements Cloneable<Match> {
         return !played;
     }
 
-    @JsonIgnore
-    public String getTeamsString(){
-        return localResult.getTeam().getName() + "-" + visitorResult.getTeam().getName();
-    }
-
 
     @Override
     public String toString() {
