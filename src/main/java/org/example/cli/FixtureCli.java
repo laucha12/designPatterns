@@ -80,6 +80,14 @@ public class FixtureCli implements Callable<Integer> {
     }
 
     private int executionStrategy(CommandLine.ParseResult parseResult) {
+        //Run help and version without init
+        if(parseResult.isUsageHelpRequested()){
+            return this.call();
+        }
+        if(parseResult.isVersionHelpRequested()){
+            new CommandLine(this).printVersionHelp(System.out);
+            return 0;
+        }
         try {
             init();
         }catch (Exception e){
