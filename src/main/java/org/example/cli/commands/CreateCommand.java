@@ -193,7 +193,7 @@ public class CreateCommand implements Callable<Integer> {
             for(int date = 0; date < pendingDates.size(); date ++ ){
                 MatchDate matchDate = pendingDates.get(date);
                 for(Match match : matchDate.getPendingMatches()){
-                    System.out.println("Progress: " + date*100.0/ pendingDates.size() + "%");
+                    System.out.printf("Progress: %.2f %%\n",date*100.0/ pendingDates.size());
                     Match userMatch = getMatchScore(match, reader, keyMap);
                     userFixture.addMatch(matchDate.getNumber(), userMatch);
                 }

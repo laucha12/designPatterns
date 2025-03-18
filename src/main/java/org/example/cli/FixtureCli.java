@@ -18,25 +18,25 @@ import java.util.concurrent.Callable;
 
 @Command(name = "fixture",
         mixinStandardHelpOptions = true,
-        description = "A cli tool for creating and calculating the score of a fixture",
+        description = "A cli tool for creating and calculating the score of a prode",
         subcommands = {CreateCommand.class, ScoreCommand.class},
         version = "1.0"
 )
 public class FixtureCli implements Callable<Integer> {
 
 
-    enum League {Arg, Eng}
+    enum League {Arg, Pre}
 
-    @CommandLine.Option(names = {"-l", "--league"}, description = "League (Arg or Eng)", required = true)
+    @CommandLine.Option(names = {"-l", "--league"}, description = "League (Arg or Pre)", required = true)
     private League league;
 
-    @CommandLine.Option(names = {"-s", "--signed"}, description = "Sign the fixture for future validation")
+    @CommandLine.Option(names = {"-s", "--signed"}, description = "Sign the prode for future validation")
     private boolean signed;
 
-    @CommandLine.Option(names = {"-p", "--password"}, description = "password used to encrypt and decrypt the fixture", interactive = true)
+    @CommandLine.Option(names = {"-p", "--password"}, description = "password used to encrypt and decrypt the prode")
     private String password;
 
-    @CommandLine.Option(names = {"-f", "--file"}, description = "The file where to save or load the fixture", defaultValue = "fixture.txt")
+    @CommandLine.Option(names = {"-f", "--file"}, description = "The file where to save or load the prode", defaultValue = "fixture.txt")
     @Getter
     private String fileName;
 
@@ -51,7 +51,7 @@ public class FixtureCli implements Callable<Integer> {
         TeamRepository teamRepository = TeamRepositoryOnMemoryImpl.getInstance();
         fixture = switch (league){
             case Arg -> new ArgentinianFootballFixtureAdapterImpl(teamRepository).getFootballFixture();
-            case Eng -> new PremierLeagueFootballFixtureAdapterImpl(teamRepository).getFootballFixture();
+            case Pre -> new PremierLeagueFootballFixtureAdapterImpl(teamRepository).getFootballFixture();
         };
         fixtureDataSource = new FileFixtureDataSource();
         //Maybe use factory?
