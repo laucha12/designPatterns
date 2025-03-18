@@ -5,12 +5,10 @@ import org.example.models.*;
 import org.jline.keymap.BindingReader;
 import org.jline.keymap.KeyMap;
 import org.jline.terminal.Terminal;
-import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.InfoCmp;
 import picocli.CommandLine;
 
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +24,7 @@ public class CreateCommand implements Callable<Integer> {
     @CommandLine.ParentCommand
     private FixtureCli parent;
 
-    private static Terminal terminal;
+    private static final Terminal terminal = FixtureCli.getTerminal();
 
     // Define key codes - with additional codes for Mac
     private static final String KEY_LEFT = "\033[D";
@@ -38,17 +36,6 @@ public class CreateCommand implements Callable<Integer> {
     // Mac-specific arrow keys (some terminals)
     private static final String KEY_LEFT_MAC = "\033OD";
     private static final String KEY_RIGHT_MAC = "\033OC";
-
-    static {
-        try {
-            terminal = TerminalBuilder.builder()
-                    .system(true)
-                    .jansi(true)
-                    .build();
-        } catch (IOException e) {
-            System.err.println("Failed to initialize terminal: " + e.getMessage());
-        }
-    }
 
     private static void clearScreen() {
         terminal.puts(InfoCmp.Capability.clear_screen);

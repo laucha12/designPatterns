@@ -29,15 +29,7 @@ public class ScoreCommand implements Callable<Integer> {
     @CommandLine.ParentCommand
     private FixtureCli  parent;
 
-    private static Terminal terminal;
-
-    static {
-        try {
-            terminal = TerminalBuilder.terminal();
-        } catch (IOException e) {
-            System.err.println("Failed to initialize terminal: " + e.getMessage());
-        }
-    }
+    private static final Terminal terminal = FixtureCli.getTerminal();
 
     private Fixture readFixture(final String fileName, FixtureDataSource dataSource){
         try(InputStream inputStream = new FileInputStream(fileName)) {
@@ -81,7 +73,7 @@ public class ScoreCommand implements Callable<Integer> {
         final Fixture leagueFixture = parent.getFixture();
         final Fixture userFixture = readFixture(parent.getFileName(), parent.getFixtureDataSource());
         System.out.printf("User score is %d\n", getScore(leagueFixture, userFixture));
-        return 1;
+        return 0;
     }
 
 }

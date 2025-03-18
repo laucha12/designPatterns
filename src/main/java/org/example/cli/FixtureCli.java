@@ -11,9 +11,12 @@ import org.example.file.SignatureDecorator;
 import org.example.interfaces.TeamRepository;
 import org.example.models.Fixture;
 import org.example.repositories.TeamRepositoryOnMemoryImpl;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
+import java.io.IOException;
 import java.util.concurrent.Callable;
 
 @Command(name = "fixture",
@@ -24,6 +27,19 @@ import java.util.concurrent.Callable;
 )
 public class FixtureCli implements Callable<Integer> {
 
+    @Getter
+    private static Terminal terminal;
+
+    static {
+        try {
+            terminal = TerminalBuilder.builder()
+                    .system(true)
+                    .jansi(true)
+                    .build();
+        } catch (IOException e) {
+            System.err.println("Failed to initialize terminal: " + e.getMessage());
+        }
+    }
 
     enum League {Arg, Pre}
 
