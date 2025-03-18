@@ -3,33 +3,37 @@ package org.example.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.example.interfaces.Cloneable;
 
 import java.util.Optional;
 
 @Getter
 @NoArgsConstructor
+@ToString
 public class Match implements Cloneable<Match> {
 
     private boolean played;
     private Team localTeam;
     private Team visitorTeam;
+    private Optional<String> referee;
     private Optional<Integer> localGoals;
     private Optional<Integer> visitorGoals;
 
 
-    private Match(Team localTeam, Team visitorTeam, Optional<Integer> localGoals, Optional<Integer> visitorGoals) {
+    private Match(Team localTeam, Team visitorTeam, Optional<Integer> localGoals, Optional<Integer> visitorGoals,Optional<String> referee) {
         this.played = localGoals.isPresent() && visitorGoals.isPresent();
         this.localTeam = localTeam;
         this.visitorTeam = visitorTeam;
         this.localGoals = localGoals;
         this.visitorGoals = visitorGoals;
+        this.referee = referee;
     }
 
     @Override
     public Match clone() {
         //Optional is immutable
-        return new Match(localTeam.clone(), visitorTeam.clone(), localGoals, visitorGoals);
+        return new Match(localTeam.clone(), visitorTeam.clone(), localGoals, visitorGoals,referee);
     }
 
     @JsonIgnore
@@ -48,6 +52,7 @@ public class Match implements Cloneable<Match> {
         private Team visitorTeam;
         private Integer localGoals;
         private Integer visitorGoals;
+        private String referee;
 
         @Override
         public MatchBuilder localTeam(Team localTeam) {
@@ -74,8 +79,15 @@ public class Match implements Cloneable<Match> {
         }
 
         @Override
+        public MatchBuilder referee(String referee) {
+            this.referee = referee;
+            return this;
+        }
+
+
+        @Override
         public Match build() {
-            return new Match(localTeam, visitorTeam, Optional.ofNullable(localGoals), Optional.ofNullable(visitorGoals));
+            return new Match(localTeam, visitorTeam, Optional.ofNullable(localGoals), Optional.ofNullable(visitorGoals),Optional.ofNullable(referee));
         }
     }
 }

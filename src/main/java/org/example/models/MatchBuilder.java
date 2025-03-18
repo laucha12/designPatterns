@@ -5,5 +5,6 @@ public interface MatchBuilder {
     MatchBuilder visitorTeam(Team visitorTeam);
     MatchBuilder localGoals(Integer goals);
     MatchBuilder visitorGoals(Integer visitorGoals);
+    MatchBuilder referee(String referee);
     Match build();
 }

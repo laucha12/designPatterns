@@ -46,6 +46,9 @@ public class ArgentinianFootballFixtureAdapterImpl implements FootballFixtureAda
                 Optional<String> visitorTeamText = Optional.ofNullable(partido.select(".visitante").first())
                         .map(Element::text);
 
+                Optional<String> referee = Optional.ofNullable(partido.select(".arbitro").first())
+                        .map(Element::text).map(s -> s.replaceAll("Árbitro: ", " ")).filter(s -> !s.isEmpty());
+
                 //Set local team
                 localTeamText.map(this::getTeamName)
                         .map(teamRepository::getOrCreateTeam)
@@ -66,24 +69,9 @@ public class ArgentinianFootballFixtureAdapterImpl implements FootballFixtureAda
                         .map(Integer::parseInt)
                         .ifPresent(matchBuilder::visitorGoals);
 
+                //Set referee
+                referee.ifPresent(matchBuilder::referee);
 
-//                Element local = partido.select(".local").first();
-//                Element visitante = partido.select(".visitante").first();
-//
-//                String equipoLocal = local.text();
-//                String equipoVisitante = visitante.text();
-//                String localGolText = equipoLocal.replaceAll("[^0-9]", "");
-//                String visitanteGolText = equipoVisitante.replaceAll("[^0-9]", "");
-//
-//                Integer localGol = localGolText.isEmpty() ? null : Integer.parseInt(localGolText);
-//                Integer visitanteGol = visitanteGolText.isEmpty() ? null : Integer.parseInt(visitanteGolText);
-//
-//
-//                String nombreLocal = equipoLocal.replaceAll("[0-9]|' '", "");
-//                String nombreVisitante = equipoVisitante.replaceAll("[0-9]|' '", "");
-//
-//                TeamResult localTeam = new TeamResult(teamRepository.getOrCreateTeam(nombreLocal), localGol);
-//                TeamResult visitanteTeam = new TeamResult(teamRepository.getOrCreateTeam(nombreVisitante), visitanteGol);
                 Match match = matchBuilder.build();
                 //Avoid unconfirmed matches
                 if(!match.getLocalTeam().getName().equals("A Confirmar")){
