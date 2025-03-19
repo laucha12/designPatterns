@@ -4,14 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.example.interfaces.Cloneable;
 
 import java.util.Optional;
 
 @Getter
 @NoArgsConstructor
 @ToString
-public class Match implements Cloneable<Match> {
+public class Match {
 
     private boolean played;
     private Team localTeam;
@@ -28,12 +27,6 @@ public class Match implements Cloneable<Match> {
         this.localGoals = localGoals;
         this.visitorGoals = visitorGoals;
         this.referee = referee;
-    }
-
-    @Override
-    public Match clone() {
-        //Optional is immutable
-        return new Match(localTeam.clone(), visitorTeam.clone(), localGoals, visitorGoals,referee);
     }
 
     @JsonIgnore

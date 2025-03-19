@@ -8,7 +8,10 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.security.spec.KeySpec;
@@ -17,7 +20,6 @@ import java.util.Base64;
 public class EncryptionDecorator extends FixtureDataSourceDecorator{
 
     private static final String ALGORITHM = "AES/OFB/NoPadding";
-    //GCM provides a tag
     private static final int IV_LENGTH = 16; // AES block size
     private static final int SALT_LENGTH = 16;
     private static final String KEY_DERIVATION_ALGORITHM = "PBKDF2WithHmacSHA256";

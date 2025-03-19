@@ -4,13 +4,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.interfaces.FootballFixtureAdapter;
 import org.example.interfaces.TeamRepository;
-import org.example.models.*;
+import org.example.models.Fixture;
+import org.example.models.Match;
+import org.example.models.MatchBuilder;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class PremierLeagueFootballFixtureAdapterImpl implements FootballFixtureAdapter {
 

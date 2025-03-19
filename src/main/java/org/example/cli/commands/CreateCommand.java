@@ -1,7 +1,10 @@
 package org.example.cli.commands;
 
 import org.example.cli.FixtureCli;
-import org.example.models.*;
+import org.example.models.Fixture;
+import org.example.models.Match;
+import org.example.models.MatchBuilder;
+import org.example.models.MatchDate;
 import org.jline.keymap.BindingReader;
 import org.jline.keymap.KeyMap;
 import org.jline.terminal.Terminal;
@@ -113,6 +116,11 @@ public class CreateCommand implements Callable<Integer> {
             }
 
             display.append(" ").append(fixtureMatch.getVisitorTeam().getName());
+
+            //Add referee if available
+            fixtureMatch.getReferee()
+                    .map(name -> String.format("( Referee: %s)", name))
+                    .ifPresent(display::append);
 
             System.out.print(display);
             terminal.flush();

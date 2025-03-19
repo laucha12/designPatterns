@@ -2,7 +2,10 @@ package org.example.adapters;
 
 import org.example.interfaces.FootballFixtureAdapter;
 import org.example.interfaces.TeamRepository;
-import org.example.models.*;
+import org.example.models.Fixture;
+import org.example.models.Match;
+import org.example.models.MatchBuilder;
+import org.example.models.MatchDate;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -47,7 +50,9 @@ public class ArgentinianFootballFixtureAdapterImpl implements FootballFixtureAda
                         .map(Element::text);
 
                 Optional<String> referee = Optional.ofNullable(partido.select(".arbitro").first())
-                        .map(Element::text).map(s -> s.replaceAll("Árbitro: ", " ")).filter(s -> !s.isEmpty());
+                        .map(Element::text)
+                        .map(s -> s.replaceAll("Árbitro: ", " "))
+                        .filter(s -> !s.isEmpty());
 
                 //Set local team
                 localTeamText.map(this::getTeamName)

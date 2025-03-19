@@ -8,7 +8,6 @@ import java.util.Map;
 
 public class TeamRepositoryOnMemoryImpl implements TeamRepository {
 
-
     private final Map<String, Team> teams;
 
     private static TeamRepositoryOnMemoryImpl instance;

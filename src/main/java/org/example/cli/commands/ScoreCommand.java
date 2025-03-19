@@ -6,17 +6,12 @@ import org.example.models.Fixture;
 import org.example.models.Match;
 import org.example.models.MatchDate;
 import org.jline.terminal.Terminal;
-import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.InfoCmp;
 import picocli.CommandLine;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.Callable;
 
 @CommandLine.Command(
@@ -44,7 +39,6 @@ public class ScoreCommand implements Callable<Integer> {
         //get all the dates the user predicted (they will be marked as pending because of when they were stored)
         for(MatchDate userDate : userFixture.getMatchDatesList()){
             //Get the results for that date
-            //FIXME: is null for premier league
             final MatchDate leagueDate = leagueFixture.getMatchDate(userDate.getNumber());
             //We add points for all played matches
             for(Match userPrediction: userDate.getPlayedMatches()){
@@ -54,10 +48,6 @@ public class ScoreCommand implements Callable<Integer> {
                     Objects.equals(userPrediction.getVisitorGoals(), leagueResult.getVisitorGoals())){
                     score++;
                 }
-//                score += Optional.ofNullable(userDate.getMatch(playedMatch.getTeamsString()))//user has a prediction for that match
-//                        .filter(m -> Objects.equals(m.getLocalResult().getGoals(), playedMatch.getLocalResult().getGoals()) && Objects.equals(m.getVisitorResult().getGoals(), playedMatch.getVisitorResult().getGoals())) //that prediction is the same
-//                        .map(m -> 1)
-//                        .orElse(0);
             }
         }
         return score;
