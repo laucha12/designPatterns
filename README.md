@@ -9,6 +9,9 @@ intended to be played with families and friends.
 
 ## Table of contents 
 - [Requirements](#requirements)
+- [Compilation](#compilation)
+- [Execution](#execution)
+- [About](#about)
 
 
 ## Requirements
@@ -31,7 +34,7 @@ To compile the project, the following steps must be followed:
    mvn clean install
     ```
 
-## Execute the cli tool 
+## Execution
 To get a description of the commands and the possible options, execute
 ```bash
 java -jar target/DesignPatterns-1.0-SNAPSHOT-jar-with-dependencies.jar
