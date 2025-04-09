@@ -12,7 +12,8 @@ public class CircuitBreaker {
     private CircuitBreakerState state = CircuitBreakerState.Closed;
     protected LocalTime failureInstant = null;
     protected int retryCount = 0;
-    protected final int maxRetryCount = 3;
+    protected final int RETRY_THRESHOLD = 3;
+    protected final int MILISECONDS_THRESHOLD = 10;
 
     public Object invokeFunction(CheckedFunction<Object> supplier) throws InterruptedException {
         return state.invokeFunction(this, supplier);
@@ -37,14 +38,14 @@ public class CircuitBreaker {
             return false;
         }
         LocalTime now = LocalTime.now();
-        return ChronoUnit.MILLIS.between(failureInstant, now) > 10;
+        return ChronoUnit.MILLIS.between(failureInstant, now) > MILISECONDS_THRESHOLD;
     }
 }
 enum CircuitBreakerState {
     Closed {
         @Override
         public CircuitBreakerState nextState(CircuitBreaker cb) {
-            if (cb.retryCount >= cb.maxRetryCount) {
+            if (cb.retryCount >= cb.RETRY_THRESHOLD) {
                 cb.resetRetryCount();
                 cb.failureInstant = LocalTime.now();
                 return Open;

@@ -32,7 +32,7 @@ import java.util.concurrent.Callable;
         version = "1.0"
 )
 public class FixtureCli implements Callable<Integer> {
-
+    private static final int MAX_ATTEMPTS = 10000;
     @Getter
     private static Terminal terminal;
 
@@ -81,7 +81,7 @@ public class FixtureCli implements Callable<Integer> {
             case Pre ->  ((FootballFixtureAdapter) CircuitBreakerProxy.newInstance(new PremierLeagueFootballFixtureAdapterImpl(teamRepository)));
         };
         Fixture toReturn = null;
-        while(attempts < 10000 && toReturn == null){
+        while(attempts < MAX_ATTEMPTS && toReturn == null){
             attempts++;
             toReturn = adapter.getFootballFixture();
         }
