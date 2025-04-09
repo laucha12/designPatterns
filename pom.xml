@@ -22,6 +22,8 @@
         <jackson.version>2.18.2</jackson.version>
         <bouncycastle.version>1.80</bouncycastle.version>
         <picocli.version>4.7.6</picocli.version>
+        <openai.version>0.44.3</openai.version>
+        <genai.version>0.3.0</genai.version>
     </properties>
     <dependencies>
         <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
@@ -62,7 +64,16 @@
             <artifactId>bcprov-jdk18on</artifactId>
             <version>${bouncycastle.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.openai</groupId>
+            <artifactId>openai-java</artifactId>
+            <version>${openai.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.genai</groupId>
+            <artifactId>google-genai</artifactId>
+            <version>${genai.version}</version>
+        </dependency>
 
     </dependencies>
     <build>

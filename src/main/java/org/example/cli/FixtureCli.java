@@ -2,6 +2,10 @@ package org.example.cli;
 import lombok.Getter;
 import org.example.adapters.ArgentinianFootballFixtureAdapterImpl;
 import org.example.adapters.PremierLeagueFootballFixtureAdapterImpl;
+import org.example.ai.GoogleTeamDescriptionServiceImpl;
+import org.example.ai.OpenAiTeamDescriptionServiceImpl;
+import org.example.ai.TeamDescriptionCacheProxy;
+import org.example.ai.TeamDescriptionService;
 import org.example.cli.commands.CreateCommand;
 import org.example.cli.commands.ScoreCommand;
 import org.example.file.EncryptionDecorator;
@@ -64,6 +68,9 @@ public class FixtureCli implements Callable<Integer> {
     @Getter
     private FixtureDataSource fixtureDataSource;
 
+    @Getter
+    TeamDescriptionService teamDescriptionService;
+
     //Run code common to all commands
     private void init() throws Exception{
         TeamRepository teamRepository = TeamRepositoryOnMemoryImpl.getInstance();
@@ -72,6 +79,7 @@ public class FixtureCli implements Callable<Integer> {
             case Pre -> ((FootballFixtureAdapter) CircuitBreakerProxy.newInstance(new PremierLeagueFootballFixtureAdapterImpl(teamRepository))).getFootballFixture();
         };
         fixtureDataSource = new FileFixtureDataSource();
+        teamDescriptionService = new TeamDescriptionCacheProxy(new GoogleTeamDescriptionServiceImpl());
         //Maybe use factory?
         if(password != null){
             fixtureDataSource = new EncryptionDecorator(fixtureDataSource, password);
