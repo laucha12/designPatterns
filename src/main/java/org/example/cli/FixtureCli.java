@@ -6,6 +6,8 @@ import org.example.ai.TeamDescriptionServiceImpl;
 import org.example.ai.models.GoogleTextModelAdapter;
 import org.example.ai.TeamDescriptionCacheProxy;
 import org.example.ai.TeamDescriptionService;
+import org.example.ai.models.OpenAiTextModelAdapter;
+import org.example.ai.models.TextModelAdapter;
 import org.example.cli.commands.CreateCommand;
 import org.example.cli.commands.ScoreCommand;
 import org.example.file.EncryptionDecorator;
@@ -58,6 +60,11 @@ public class FixtureCli implements Callable<Integer> {
     @CommandLine.Option(names = {"-p", "--password"}, description = "password used to encrypt and decrypt the prode")
     private String password;
 
+    enum ModelProvider {OPENAI, GOOGLE}
+
+    @CommandLine.Option(names = {"-m", "--model"}, description = "LLM provider to use", defaultValue = "GOOGLE")
+    private ModelProvider modelProvider;
+
     @CommandLine.Option(names = {"-f", "--file"}, description = "The file where to save or load the prode", defaultValue = "fixture.txt")
     @Getter
     private String fileName;
@@ -90,7 +97,11 @@ public class FixtureCli implements Callable<Integer> {
         }
         this.fixture = toReturn;
         fixtureDataSource = new FileFixtureDataSource();
-        teamDescriptionService = new TeamDescriptionCacheProxy(new TeamDescriptionServiceImpl(new GoogleTextModelAdapter()));
+        final TextModelAdapter textModelAdapter = switch (modelProvider){
+            case OPENAI -> new OpenAiTextModelAdapter();
+            case GOOGLE -> new GoogleTextModelAdapter();
+        };
+        teamDescriptionService = new TeamDescriptionCacheProxy(new TeamDescriptionServiceImpl(textModelAdapter));
         //Maybe use factory?
         if(password != null){
             fixtureDataSource = new EncryptionDecorator(fixtureDataSource, password);

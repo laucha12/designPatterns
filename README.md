@@ -34,6 +34,16 @@ To compile the project, the following steps must be followed:
    mvn clean install
     ```
 
+## Configuration
+Because LLMs are used to get a team description, an API key should be provided for the pogram.
+
+This key should be defined as an environment variable, and it can be generated in the [OpenAI platform](https://platform.openai.com/docs/overview) 
+or [Google AI studio](https://aistudio.google.com). A template for the names of the variables is in the `.env_template` file, and 
+the following command can be used to load them:
+```bash
+export $(grep -v '^#' .env | xargs)
+```
+
 ## Execution
 To get a description of the commands and the possible options, execute
 ```bash
@@ -71,3 +81,40 @@ This project was made as an assignment for the subject _Application or use cases
 **The team members are:**
 - [Lautaro Hernando](https://github.com/laucha12)
 - [José Rodolfo Mentasti](https://github.com/JoseMenta)
+
+## Assignment 3 
+For the third assignment, the following design patterns were implemented:
+- Circuit breaker
+- LLMProxy
+- LLM Adapter
+
+
+### Circuit breaker
+This resilience pattern was chosen to prevent the adapters that get the information for each league.
+To implement it, the `InvocationHandler` interface from `java.lang.reflect` was implemented in the 
+`CircuitBreakerProxy` class, using the `CircuitBreaker` class for the logic of opening and closing 
+the circuit. 
+
+Dynamic proxies were used because they enable transparent use of the wrapped classes without adding 
+interfaces, and they can be used for arbitrary classes without knowing their prior implementation or
+declared methods.
+
+To test this functionality and avoid failing in the first case (in which the circuit is opend and 
+a null value is returned), a while loop was added in the `init` method of the `FixtureCli` class.
+
+### LLM Adapter
+For the creation of the fixture, a brief description of the team was added to help new users with their 
+decisions. Because there are different providers of LLMs, the adapter pattern was used to define a common
+interface that can be used by the application and hide the implementation details of each provider. This interface
+is defined in `TextModelAdapter` in the `ai.models` package, with two concrete implementations for _OpenAi_ and _Google Gemini_ 
+in the same package.
+
+
+### LLMProxy
+To avoid calling the LLM provider for teams that have already been described, a proxy was implemented to cache the results.
+The `TeamDescriptionService` interface is defined with the methods to get the description of a team, the `TeamDescriptionServiceImpl`
+uses a provided adapter to get a description with a custom prompt, and the `TeamDescriptionCacheProxy` wraps the implementation
+to cache the results.
+
+The improvements offered by this approach are notorious, and it is shown with the difference in loading time when completing 
+the second date of a tournament (where most teams will be cached). 
