@@ -16,8 +16,8 @@ import java.util.Optional;
 
 public class ArgentinianFootballFixtureAdapterImpl implements FootballFixtureAdapter {
 
-    private final String ARGENTINIAN_LEAGUE = "https://info.afa.org.ar/deposito/html/v3/htmlCenter/data/deportes/futbol/primeraa/pages/es/fixture.html?h=dfMc-page-ec43917b-a0f4-4d06-a34c-d9069f6f4ce0";
-
+    private  String ARGENTINIAN_LEAGUE = "https://infaao.afa.org.ar/deposito/html/v3/htmlCenter/data/deportes/futbol/primeraa/pages/es/fixture.html?h=dfMc-page-ec43917b-a0f4-4d06-a34c-d9069f6f4ce0";
+    private int counter = 1;
     private final TeamRepository teamRepository;
 
 
@@ -35,6 +35,10 @@ public class ArgentinianFootballFixtureAdapterImpl implements FootballFixtureAda
 
     @Override
     public Fixture getFootballFixture() throws IOException {
+        counter++;
+        if (counter > 10)
+            ARGENTINIAN_LEAGUE = "https://info.afa.org.ar/deposito/html/v3/htmlCenter/data/deportes/futbol/primeraa/pages/es/fixture.html?h=dfMc-page-ec43917b-a0f4-4d06-a34c-d9069f6f4ce0";
+
         Document doc = Jsoup.connect(ARGENTINIAN_LEAGUE).get();
         Elements fechas = doc.select(".fecha");
         //We can use builder for Fixture and Match

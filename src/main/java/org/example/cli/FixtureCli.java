@@ -67,10 +67,21 @@ public class FixtureCli implements Callable<Integer> {
     //Run code common to all commands
     private void init() throws Exception{
         TeamRepository teamRepository = TeamRepositoryOnMemoryImpl.getInstance();
-        fixture = switch (league){
-            case Arg -> ((FootballFixtureAdapter) CircuitBreakerProxy.newInstance(new ArgentinianFootballFixtureAdapterImpl(teamRepository))).getFootballFixture();
-            case Pre -> ((FootballFixtureAdapter) CircuitBreakerProxy.newInstance(new PremierLeagueFootballFixtureAdapterImpl(teamRepository))).getFootballFixture();
+        FootballFixtureAdapter adapter = null;
+        int attempts = 0;
+        adapter = switch (league){
+            case Arg -> (FootballFixtureAdapter) CircuitBreakerProxy.newInstance(new ArgentinianFootballFixtureAdapterImpl(teamRepository));
+            case Pre ->  ((FootballFixtureAdapter) CircuitBreakerProxy.newInstance(new PremierLeagueFootballFixtureAdapterImpl(teamRepository)));
         };
+        Fixture toReturn = null;
+        while(attempts < 10000 && toReturn == null){
+            attempts++;
+            toReturn = adapter.getFootballFixture();
+        }
+        if(toReturn == null){
+            throw new Exception("Failed to get fixture");
+        }
+        this.fixture = toReturn;
         fixtureDataSource = new FileFixtureDataSource();
         //Maybe use factory?
         if(password != null){
