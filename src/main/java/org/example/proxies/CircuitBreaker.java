@@ -13,7 +13,7 @@ public class CircuitBreaker {
     protected LocalTime failureInstant = null;
     protected int retryCount = 0;
     protected final int RETRY_THRESHOLD = 3;
-    protected final int MILISECONDS_THRESHOLD = 10;
+    protected final int MILISECONDS_THRESHOLD = 2;
 
     public Object invokeFunction(CheckedFunction<Object> supplier) throws InterruptedException {
         return state.invokeFunction(this, supplier);
@@ -29,6 +29,7 @@ public class CircuitBreaker {
             try {
                 return supplier.apply();
             } catch (Exception e) {
+                System.out.println("CircuitBreaker::executeWithRetry: " + e.getMessage());
                 retryCount++;
         }
         return null;

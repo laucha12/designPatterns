@@ -56,6 +56,7 @@ given league. The following options can be passed:
 - `-l, --league=<league>` The league of the fixture, it can be `Arg` for Argentinian League or `Pre` for Premier League.
 - `-p, --password=<password>` An optional password used to encrypt the prode.
 - `-s, --signed` To sign the prode.
+- `-m, --model=<provider>` LLM provider, it can be `OPENAI` or `GOOGLE` (with `GOOGLE` being the default)
 
 An example would be the following
 ```bash
@@ -69,6 +70,7 @@ for each correct prediction. The following options are available:
 - `-l, --league=<league>` The league of the fixture used to create the prode.
 - `-p, --password=<password>` The password used to encrypt the prode when created.
 - `-s, --signed` To verify the prode was produced by this software. Must be used when the same option was used in the creation. 
+- `-m, --model=<provider>` LLM provider, it can be `OPENAI` or `GOOGLE` (with `GOOGLE` being the default)
 
 An example of use would be the following:
 ```bash
