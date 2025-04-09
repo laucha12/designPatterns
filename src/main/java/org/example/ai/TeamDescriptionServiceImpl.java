@@ -1,8 +1,9 @@
 package org.example.ai;
 
-import com.google.genai.Client;
+import org.example.ai.models.TextModelAdapter;
 
-public class GoogleTeamDescriptionServiceImpl implements TeamDescriptionService {
+public class TeamDescriptionServiceImpl implements TeamDescriptionService {
+
     private static final String TEAM_DESCRIPTION_PROMPT = "Give me a description of the following football team: %s." +
             " The description should be short and concise, focusing on the performance of the team in the last years and the fans it has." +
             " If the required name is not from a football team, output the value 'description not found' and nothing else." +
@@ -10,19 +11,14 @@ public class GoogleTeamDescriptionServiceImpl implements TeamDescriptionService 
 
     private static final String DEFAULT = "No description found";
 
-    Client client;
+    private final TextModelAdapter model;
 
-    public GoogleTeamDescriptionServiceImpl() {
-        client = new Client();
+    public TeamDescriptionServiceImpl(TextModelAdapter model) {
+        this.model = model;
     }
 
     @Override
     public String getTeamDescription(String teamName) {
-        try {
-            return client.models.generateContent("gemini-2.0-flash-001", String.format(TEAM_DESCRIPTION_PROMPT,teamName),null).text();
-        }catch (Exception e){
-            return DEFAULT;
-        }
-
+        return model.query(String.format(TEAM_DESCRIPTION_PROMPT,teamName)).orElse(DEFAULT);
     }
 }
