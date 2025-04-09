@@ -69,7 +69,7 @@ public class CreateCommand implements Callable<Integer> {
         return String.format("\033[47m\033[30m%s\033[0m",input);
     }
 
-    private Match getMatchScore(Match fixtureMatch, BindingReader reader, KeyMap<String> keyMap) {
+    private Match getMatchScore(Match fixtureMatch, BindingReader reader, KeyMap<String> keyMap, double progreess) {
 
         //Get new instance of match to change the results
         MatchBuilder matchBuilder = Match.builder()
@@ -87,6 +87,7 @@ public class CreateCommand implements Callable<Integer> {
         int previousSelectedScore = -1; // Track position changes
 
         while (!matchComplete) {
+            System.out.printf("Progress: %.2f %%\n",progreess);
             // Detect cursor position change
             if (previousSelectedScore != selectedScore) {
                 firstDigitAfterChange[selectedScore] = true;
@@ -115,12 +116,21 @@ public class CreateCommand implements Callable<Integer> {
                 display.append(scores[1]);
             }
 
-            display.append(" ").append(fixtureMatch.getVisitorTeam().getName());
+            display.append(" ").append(fixtureMatch.getVisitorTeam().getName()).append('\n');
 
             //Add referee if available
             fixtureMatch.getReferee()
                     .map(name -> String.format("( Referee: %s)", name))
-                    .ifPresent(display::append);
+                    .ifPresent(n -> display.append(n).append('\n'));
+
+            display.append(fixtureMatch.getLocalTeam().getName())
+                    .append(": ")
+                    .append(parent.getTeamDescriptionService().getTeamDescription(fixtureMatch.getLocalTeam().getName()))
+                    .append('\n')
+                    .append(fixtureMatch.getVisitorTeam().getName())
+                    .append(": ")
+                    .append(parent.getTeamDescriptionService().getTeamDescription(fixtureMatch.getVisitorTeam().getName()))
+                    .append('\n');
 
             System.out.print(display);
             terminal.flush();
@@ -163,6 +173,7 @@ public class CreateCommand implements Callable<Integer> {
                     }
                 }
             }
+            clearScreen();
         }
 
         // Reset for the next match
@@ -190,8 +201,7 @@ public class CreateCommand implements Callable<Integer> {
             for(int date = 0; date < pendingDates.size(); date ++ ){
                 MatchDate matchDate = pendingDates.get(date);
                 for(Match match : matchDate.getPendingMatches()){
-                    System.out.printf("Progress: %.2f %%\n",date*100.0/ pendingDates.size());
-                    Match userMatch = getMatchScore(match, reader, keyMap);
+                    Match userMatch = getMatchScore(match, reader, keyMap, date*100.0/ pendingDates.size());
                     userFixture.addMatch(matchDate.getNumber(), userMatch);
                 }
 
