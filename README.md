@@ -3,12 +3,15 @@ This project implements a _Prode_, a popular argentinain game where a person tri
 fixture of a football league, and gains a point for each correct prediction. A prediction is considered correct when 
 the exact result of the match is predicted, not only the winner of the match. 
 
-[!WARNING]  
-This project is not intended to be used for gambling purposes. It was made because it's a popular argentinian game 
+> [!WARNING]  
+> This project is not intended to be used for gambling purposes. It was made because it's a popular argentinian game 
 intended to be played with families and friends. 
 
 ## Table of contents 
 - [Requirements](#requirements)
+- [Compilation](#compilation)
+- [Execution](#execution)
+- [About](#about)
 
 
 ## Requirements
@@ -31,7 +34,7 @@ To compile the project, the following steps must be followed:
    mvn clean install
     ```
 
-## Execute the cli tool 
+## Execution
 To get a description of the commands and the possible options, execute
 ```bash
 java -jar target/DesignPatterns-1.0-SNAPSHOT-jar-with-dependencies.jar

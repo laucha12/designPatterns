@@ -20,7 +20,7 @@ public class Match {
     private Optional<Integer> visitorGoals;
 
 
-    private Match(Team localTeam, Team visitorTeam, Optional<Integer> localGoals, Optional<Integer> visitorGoals,Optional<String> referee) {
+    public Match(Team localTeam, Team visitorTeam, Optional<Integer> localGoals, Optional<Integer> visitorGoals,Optional<String> referee) {
         this.played = localGoals.isPresent() && visitorGoals.isPresent();
         this.localTeam = localTeam;
         this.visitorTeam = visitorTeam;
