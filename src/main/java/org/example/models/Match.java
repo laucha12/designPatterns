@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Getter
 @NoArgsConstructor
-@ToString
+@ToString   
 public class Match {
 
     private boolean played;

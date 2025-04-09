@@ -17,6 +17,7 @@ import java.util.Optional;
 public class ArgentinianFootballFixtureAdapterImpl implements FootballFixtureAdapter {
 
     private final String ARGENTINIAN_LEAGUE = "https://info.afa.org.ar/deposito/html/v3/htmlCenter/data/deportes/futbol/primeraa/pages/es/fixture.html?h=dfMc-page-ec43917b-a0f4-4d06-a34c-d9069f6f4ce0";
+
     private final TeamRepository teamRepository;
 
 

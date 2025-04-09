@@ -8,8 +8,10 @@ import org.example.file.EncryptionDecorator;
 import org.example.file.FileFixtureDataSource;
 import org.example.file.FixtureDataSource;
 import org.example.file.SignatureDecorator;
+import org.example.interfaces.FootballFixtureAdapter;
 import org.example.interfaces.TeamRepository;
 import org.example.models.Fixture;
+import org.example.proxies.CircuitBreakerProxy;
 import org.example.repositories.TeamRepositoryOnMemoryImpl;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
@@ -66,8 +68,8 @@ public class FixtureCli implements Callable<Integer> {
     private void init() throws Exception{
         TeamRepository teamRepository = TeamRepositoryOnMemoryImpl.getInstance();
         fixture = switch (league){
-            case Arg -> new ArgentinianFootballFixtureAdapterImpl(teamRepository).getFootballFixture();
-            case Pre -> new PremierLeagueFootballFixtureAdapterImpl(teamRepository).getFootballFixture();
+            case Arg -> ((FootballFixtureAdapter) CircuitBreakerProxy.newInstance(new ArgentinianFootballFixtureAdapterImpl(teamRepository))).getFootballFixture();
+            case Pre -> ((FootballFixtureAdapter) CircuitBreakerProxy.newInstance(new PremierLeagueFootballFixtureAdapterImpl(teamRepository))).getFootballFixture();
         };
         fixtureDataSource = new FileFixtureDataSource();
         //Maybe use factory?
