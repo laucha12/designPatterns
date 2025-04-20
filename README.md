@@ -3,6 +3,8 @@ This project implements a _Prode_, a popular argentinain game where a person tri
 fixture of a football league, and gains a point for each correct prediction. A prediction is considered correct when 
 the exact result of the match is predicted, not only the winner of the match. 
 
+The repository for this project can be found [here](https://github.com/laucha12/designPatterns).
+
 > [!WARNING]  
 > This project is not intended to be used for gambling purposes. It was made because it's a popular argentinian game 
 intended to be played with families and friends. 
